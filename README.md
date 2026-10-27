@@ -1,2 +1,1 @@
-# Mock
-New Website by GPT
+# sharad-kum.github.io
