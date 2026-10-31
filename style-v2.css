@@ -309,3 +309,35 @@ main{padding-bottom:0}
 
 /* One-pager page, round 3: footer sits right under the links ---- */
 .onepager-page .site-footer{padding:2px 0 10px}
+
+/* My Work page (mywork.html) ----------------------------------------------------
+   A hub: lead line, three tiles in a row, AI-Enabled Work as a full-width band, then the recognition row.
+   One type scale for the page: titles --title-size (21px), lead --belief-size (19px),
+   body --story-size (18px, same as the home page text), secondary 15px (links, recognition). */
+.nav a[aria-current="page"]{border-bottom-color:var(--accent)}
+.mywork-page{min-height:100vh;display:flex;flex-direction:column}
+.mywork-page main{flex:1 0 auto;padding-top:18px}
+.mywork-intro{max-width:none;margin:0 0 4px}
+.work-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px 36px;align-items:stretch;padding:14px 0 8px}
+.work-tile{display:flex;flex-direction:column;min-width:0;border-top:1px solid var(--line);padding-top:12px}
+.work-tile--wide{grid-column:1/-1}
+.work-tile h2{font-size:var(--title-size);line-height:1.2;letter-spacing:-.03em;font-weight:720;margin:0 0 8px;color:var(--ink)}
+.work-tile ul{list-style:none;margin:0 0 6px;padding:0;font-size:var(--story-size);line-height:1.45;color:#3f4944}
+.work-tile li{position:relative;padding-left:16px;margin:0 0 6px}
+.work-tile li::before{content:"";position:absolute;left:2px;top:.62em;width:5px;height:5px;border-radius:50%;background:var(--accent)}
+.work-tile--wide ul{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 36px}
+.work-tile--wide li{margin:0}
+.tile-link{align-self:flex-start;margin-top:auto;font-size:15px;font-weight:680;color:var(--accent);border-bottom:1px solid var(--accent);padding-bottom:2px}
+.tile-link:hover{color:var(--ink);border-bottom-color:var(--ink)}
+.tile-link:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+@media(max-width:1023px){
+  .work-tiles{grid-template-columns:1fr}
+  .work-tile--wide ul{grid-template-columns:1fr}
+  .work-tile--wide li{margin:0 0 6px}
+}
+
+.recognition-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0 28px;border-top:1px solid var(--line);padding:12px 0 6px;margin-top:6px}
+.recognition-item b{display:block;font-size:15px;color:var(--ink);line-height:1.3;margin-bottom:2px}
+.recognition-item span{display:block;font-size:15px;color:var(--muted);line-height:1.4}
+@media(max-width:1023px){.recognition-row{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 28px}}
+@media(max-width:560px){.recognition-row{grid-template-columns:1fr}}
