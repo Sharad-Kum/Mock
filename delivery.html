@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sharad Kumar | Delivery</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=20261026-redesign">
+<link rel="stylesheet" href="style.css?v=202607291129">
 </head>
-<body class="page-delivery">
+<body>
 <div class="sub-page-container">
 
     <!-- LETTERHEAD -->
@@ -49,12 +49,12 @@
 
         <!-- Wide: two-column grid -->
         <div class="sub-carousel-desktop">
-            <div class="sub-page-grid" id="desktop-grid" aria-live="polite" aria-atomic="true"></div>
+            <div class="sub-page-grid" id="desktop-grid"></div>
             <div class="sub-carousel-nav">
                 <div class="sub-carousel-nav-controls">
-                    <button type="button" class="sub-arrow" aria-label="Previous highlights" onclick="desktopNav(-1)">&#8592;</button>
-                    <span class="sub-counter" id="desktop-counter" aria-live="polite">1 / 2</span>
-                    <button type="button" class="sub-arrow" aria-label="Next highlights" onclick="desktopNav(1)">&#8594;</button>
+                    <button class="sub-arrow" onclick="desktopNav(-1)">&#8592;</button>
+                    <span class="sub-counter" id="desktop-counter">1 / 2</span>
+                    <button class="sub-arrow" onclick="desktopNav(1)">&#8594;</button>
                 </div>
                 <a href="mywork.html" class="back-to-main-inline"><i class="fas fa-arrow-up"></i> Back to My Work</a>
             </div>
@@ -63,14 +63,14 @@
         <!-- Compact: swipe carousel -->
         <div class="sub-carousel-mobile">
             <div class="sub-swipe-wrapper">
-                <button type="button" class="sub-swipe-sidebar left" aria-label="Previous highlight" onclick="mobileNav(-1)">&#8592;</button>
+                <div class="sub-swipe-sidebar left" onclick="mobileNav(-1)">&#8592;</div>
                 <div class="sub-swipe-viewport">
-                    <div class="sub-swipe-track" id="mobile-track" aria-live="polite" aria-atomic="true"></div>
+                    <div class="sub-swipe-track" id="mobile-track"></div>
                 </div>
-                <button type="button" class="sub-swipe-sidebar right" aria-label="Next highlight" onclick="mobileNav(1)">&#8594;</button>
+                <div class="sub-swipe-sidebar right" onclick="mobileNav(1)">&#8594;</div>
             </div>
             <div class="sub-mobile-footer">
-                <span class="sub-swipe-counter" id="mobile-counter" aria-live="polite">1 / 4</span>
+                <span class="sub-swipe-counter" id="mobile-counter">1 / 4</span>
                 <a href="mywork.html" class="back-to-main-inline"><i class="fas fa-arrow-up"></i> Back to My Work</a>
             </div>
         </div>

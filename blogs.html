@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>My Blogs | Sharad Kumar</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=20261026-redesign">
+<link rel="stylesheet" href="style.css?v=ad0dace5">
 <style>
   .blogs-segment { margin-bottom: 22px; }
   .blogs-segment:last-child { margin-bottom: 0; }
@@ -55,21 +55,34 @@
   .acc-panel .blogs-segment-title { display: none; }
   .blogs-card-meta { font-size: var(--font-xs); color: var(--text-secondary); white-space: nowrap; }
   .blogs-card.is-static:hover { border-color: var(--card-border); background: transparent; }
-  @media (prefers-reduced-motion: reduce) { .acc-chev, .acc-head, .blogs-segment.acc { transition: none; } }
+  /* ---- Newsletter blocks: heading + visible series rows (added) ---- */
+  .ser { border-top: 1px solid var(--hairline); }
+  .ser-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 48px; padding: 8px 14px 8px 28px; font: inherit; font-size: var(--font-sm); font-weight: 600; color: var(--ink); text-align: left; background: transparent; border: 0; cursor: pointer; }
+  .ser-head:hover { background: var(--clay-bg); }
+  .ser-head:focus-visible { outline: 2px solid var(--clay); outline-offset: -2px; }
+  .ser-panel { display: none; padding: 4px 14px 14px; }
+  .ser.is-open > .ser-panel { display: block; }
+  .ser.is-open > .ser-head .acc-chev { transform: rotate(-135deg) translate(-2px, -2px); }
+  .ser-panel .blogs-grid-wrap { margin: 0; }
+  .nl > .acc-panel { padding: 0; }
+  .nl > .acc-panel > .ser:first-child { border-top: 0; }
+  .nl .acc-foot { margin: 0; padding: 4px 14px 10px; border-top: 1px solid var(--hairline); }
+
+  @media (prefers-reduced-motion: reduce) { .acc-chev, .acc-head, .ser-head, .blogs-segment.acc { transition: none; } }
 
   /* ---- Short screens (phone landscape): give the list the room ---- */
   @media (max-height: 500px) {
     .blogs-frame { padding-top: 6px; }
     .letterhead .tagline, .blogs-headline { display: none; }
     .letterhead .header-center h1 { font-size: 18px; }
-    .acc-head { min-height: 44px; padding-top: 6px; padding-bottom: 6px; }
+    .acc-head, .ser-head { min-height: 44px; padding-top: 6px; padding-bottom: 6px; }
     .connect-strip { padding: 4px 12px; }
     .connect-strip a { flex-direction: row; gap: 6px; min-width: 44px; min-height: 32px; justify-content: center; }
     .connect-strip a span { display: none; }
   }
 </style>
 </head>
-<body class="page-blogs">
+<body>
 <div class="blogs-frame">
 
 <div class="letterhead">
@@ -153,62 +166,77 @@
 
 </div>
 
-<script src="blog-data.js?v=0"></script>
+<script src="blog-data.js?v=2"></script>
 <script>
 (function () {
   const scroller = document.querySelector(".blogs-scroll");
   const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const upcoming = s => /^starts/i.test(s.status);   // a series that has not gone live yet
-  const short = no => no.replace("Edition ", "Ed ");
+  const upcoming = s => /^starts/i.test(s.status);   // a series that has not gone live yet stays off the landing page
   const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-  const rows = [];
+  const tops = [];   // top-level rows: newsletters and essay groups
+  const sers = [];   // series rows nested inside a newsletter
 
+  // Edition numbers and dates stay in blog-data.js for your own reference; the card shows the title only
   function card(e) {
-    const inner = `<span class="blogs-card-num">${esc(short(e.no))}</span><span class="blogs-card-title">${esc(e.title)}</span>${e.date ? `<span class="blogs-card-meta">${esc(e.date)}</span>` : ""}`;
-    return e.url ? `<a class="blogs-card" href="${esc(e.url)}" target="_blank" rel="noopener">${inner}</a>` : `<div class="blogs-card is-static">${inner}</div>`;
+    const inner = `<span class="blogs-card-title">${esc(e.title)}</span>`;
+    return e.url ? `<a class="blogs-card" href="${esc(e.url)}"${/^https?:/.test(e.url) ? ' target="_blank" rel="noopener"' : ""}>${inner}</a>` : `<div class="blogs-card is-static">${inner}</div>`;
   }
+  const grid = s => `<div class="blogs-grid-wrap"><div class="blogs-grid">${(s.newestFirst ? [...s.editions].reverse() : s.editions).map(card).join("")}</div></div>`;
+  const foot = n => n.linkedin ? `<div class="acc-foot"><a href="${esc(n.linkedin)}" target="_blank" rel="noopener">Subscribe on LinkedIn</a></div>` : "";
 
-  function makeRow(seg, id, name, tag, sub, count, bodyHTML) {
+  function makeRow(seg, id, name, count, bodyHTML, tag) {
     const head = document.createElement("button");
     head.type = "button"; head.className = "acc-head"; head.setAttribute("aria-expanded", "false"); head.setAttribute("aria-controls", "panel-" + id);
-    head.innerHTML = `<span class="acc-main"><span class="acc-name">${esc(name)}<span class="acc-tag">${esc(tag)}</span></span>${sub ? `<span class="acc-sub">${esc(sub)}</span>` : ""}</span><span class="acc-side"><span class="acc-count">${esc(count)}</span><span class="acc-chev" aria-hidden="true"></span></span>`;
+    head.innerHTML = `<span class="acc-main"><span class="acc-name">${esc(name)}${tag ? `<span class="acc-tag">${esc(tag)}</span>` : ""}</span></span><span class="acc-side"><span class="acc-count">${esc(count)}</span><span class="acc-chev" aria-hidden="true"></span></span>`;
     const panel = document.createElement("div");
     panel.className = "acc-panel"; panel.id = "panel-" + id;
     if (bodyHTML) { panel.innerHTML = bodyHTML; } else { while (seg.firstChild) panel.appendChild(seg.firstChild); }
     seg.append(head, panel);
     seg.classList.add("acc"); seg.id = id;
-    head.addEventListener("click", () => toggle(seg));
-    rows.push(seg);
+    head.addEventListener("click", () => toggleTop(seg));
+    tops.push(seg);
   }
 
-  function setOpen(seg, open) {
-    seg.classList.toggle("is-open", open);
-    seg.querySelector(".acc-head").setAttribute("aria-expanded", open ? "true" : "false");
+  function setOpen(el, open) {
+    el.classList.toggle("is-open", open);
+    el.firstElementChild.setAttribute("aria-expanded", open ? "true" : "false");
   }
-  function toggle(seg) {
-    const open = !seg.classList.contains("is-open");
-    rows.forEach(r => setOpen(r, r === seg && open));
-    if (open) scroller.scrollTo({ top: seg.offsetTop - 2, behavior: calm ? "auto" : "smooth" });
+  function scrollTo(el) { scroller.scrollTo({ top: el.offsetTop - 2, behavior: calm ? "auto" : "smooth" }); }
+  function toggleTop(el) {
+    const open = !el.classList.contains("is-open");
+    tops.forEach(r => setOpen(r, r === el && open));
+    sers.forEach(r => setOpen(r, false));   // collapsing (or switching) always resets the series rows
+    if (open) scrollTo(el);
+  }
+  function toggleSer(el) {
+    const open = !el.classList.contains("is-open");
+    const parent = el.closest(".nl");
+    tops.forEach(r => setOpen(r, r === parent));
+    sers.forEach(r => setOpen(r, r === el && open));
+    scrollTo(parent);
   }
 
-  // Newsletter rows, built from blog-data.js
+  // Newsletters, built from blog-data.js
   const mount = document.getElementById("newsletters");
   NEWSLETTERS.forEach(n => {
-    const live = n.sections.filter(s => !upcoming(s));
+    const live = n.sections.filter(s => !upcoming(s) && s.editions.length);
     const total = live.reduce((a, s) => a + s.editions.length, 0);
-    const lead = [...n.sections].reverse().find(s => s.newestFirst) || n.sections[n.sections.length - 1];
-    let sub;
-    if (upcoming(lead)) { sub = lead.title + " \u00b7 " + lead.status; }
-    else { const e = lead.editions[lead.editions.length - 1]; sub = "Latest: " + short(e.no) + " \u00b7 " + e.title + (e.date ? " \u00b7 " + e.date : ""); }
-    const body = n.sections.map(s => `
-      <div class="acc-group">
-        <div class="acc-group-title"><span>${esc(s.title)}</span><span>${esc(s.status)}</span></div>
-        <div class="blogs-grid-wrap"><div class="blogs-grid">${(s.newestFirst ? [...s.editions].reverse() : s.editions).map(card).join("")}</div></div>
-      </div>`).join("") + `
-      <div class="acc-foot"><a href="series.html?s=${esc(n.id)}">Open full archive</a>${n.linkedin ? `<a href="${esc(n.linkedin)}" target="_blank" rel="noopener">Subscribe on LinkedIn</a>` : ""}</div>`;
     const seg = document.createElement("div"); seg.className = "blogs-segment";
     mount.appendChild(seg);
-    makeRow(seg, n.id, n.title, "Newsletter", sub, plural(total, "edition"), body);
+    if (n.flat) {   // one list of editions, no series rows
+      makeRow(seg, n.id, n.title, plural(total, "edition"), live.map(grid).join("") + foot(n), n.tagline);
+      return;
+    }
+    const seriesHTML = live.map(s => {
+      const sid = n.id + "--" + s.id;
+      return `<div class="ser" id="${esc(sid)}"><button type="button" class="ser-head" aria-expanded="false" aria-controls="panel-${esc(sid)}"><span>${esc(s.title)}</span><span class="acc-side"><span class="acc-count">${esc(plural(s.editions.length, "edition"))}</span><span class="acc-chev" aria-hidden="true"></span></span></button><div class="ser-panel" id="panel-${esc(sid)}">${grid(s)}</div></div>`;
+    }).join("");
+    makeRow(seg, n.id, n.title, plural(total, "edition"), seriesHTML + foot(n), n.tagline);
+    seg.classList.add("nl");
+    seg.querySelectorAll(".ser").forEach(el => {
+      el.firstElementChild.addEventListener("click", () => toggleSer(el));
+      sers.push(el);
+    });
   });
 
   // Essay rows: your existing cards are moved into the panel untouched
@@ -217,12 +245,17 @@
     const name = h.textContent.trim();
     const count = seg.querySelectorAll(".blogs-card").length;
     h.remove();
-    makeRow(seg, slug(name), name, "Essays", "", plural(count, "post"));
+    makeRow(seg, slug(name), name, plural(count, "post"));
   });
 
   function openFromHash() {
-    const seg = rows.find(r => r.id === location.hash.slice(1));
-    if (seg) { rows.forEach(r => setOpen(r, r === seg)); scroller.scrollTo({ top: seg.offsetTop - 2 }); }
+    const id = location.hash.slice(1);
+    const ser = sers.find(r => r.id === id);
+    const top = ser ? ser.closest(".nl") : tops.find(r => r.id === id);
+    if (!top) return;
+    tops.forEach(r => setOpen(r, r === top));
+    sers.forEach(r => setOpen(r, r === ser));
+    scroller.scrollTo({ top: top.offsetTop - 2 });
   }
   window.addEventListener("hashchange", openFromHash);
   openFromHash();

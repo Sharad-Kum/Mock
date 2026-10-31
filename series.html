@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Newsletter | Sharad Kumar</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=20261026-redesign">
+<link rel="stylesheet" href="style.css?v=ad0dace5">
 <style>
   .blogs-segment { margin-bottom: 22px; }
   .blogs-segment:last-child { margin-bottom: 0; }
@@ -39,7 +39,7 @@
   .blogs-segment { scroll-margin-top: 8px; }
 </style>
 </head>
-<body class="page-series">
+<body>
 <div class="blogs-frame">
 
 <div class="letterhead">
@@ -80,7 +80,7 @@ document.getElementById("nlTitle").textContent = n.title;
 document.getElementById("nlIntro").innerHTML = esc(n.desc) + (n.linkedin ? `<a href="${esc(n.linkedin)}" target="_blank" rel="noopener">Subscribe on LinkedIn</a>` : "");
 const card = e => {
   const inner = `<span class="blogs-card-num">${esc(e.no.replace("Edition ", "Ed "))}</span><span class="blogs-card-title">${esc(e.title)}${e.summary ? `<small>${esc(e.summary)}</small>` : ""}</span>${e.date ? `<span class="blogs-card-meta">${esc(e.date)}</span>` : ""}`;
-  return e.url ? `<a class="blogs-card" href="${esc(e.url)}" target="_blank" rel="noopener">${inner}</a>` : `<div class="blogs-card is-static">${inner}</div>`;
+  return e.url ? `<a class="blogs-card" href="${esc(e.url)}"${/^https?:/.test(e.url) ? ' target="_blank" rel="noopener"' : ""}>${inner}</a>` : `<div class="blogs-card is-static">${inner}</div>`;
 };
 document.getElementById("nlBody").innerHTML = n.sections.map(s => `
   <div class="blogs-segment" id="${esc(s.id)}">
